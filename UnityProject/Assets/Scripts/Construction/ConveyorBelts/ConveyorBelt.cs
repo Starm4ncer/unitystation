@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Grpc.Core;
+using IngameDebugConsole;
 using Mirror;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -16,12 +17,17 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 	private Vector3 position;
 	private ConveyorBelt prevBelt;
 	private ConveyorBelt nextBelt;
+	public bool PrevBeltAssigned => ValidBelt(prevBelt);
+	public bool NextBeltAssigned => ValidBelt(nextBelt);
+
 	private Matrix Matrix => registerTile.Matrix;
 
 	[SyncVar(hook = nameof(SyncDirection))]
 	private ConveyorDirection CurrentDirection;
 
 	private ConveyorStatus CurrentStatus = ConveyorStatus.Off;
+	int inPos = -1;
+	int outPos = -1;
 
 	Vector2Int[] searchDirs = {new Vector2Int(-1,0), new Vector2Int(0,1),
 		new Vector2Int(1,0),new Vector2Int(0,-1)};
@@ -48,35 +54,34 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 		SyncDirection(CurrentDirection, CurrentDirection);
 	}
 
-	public void CheckNeighbours()
+	public void CheckNeighbours(bool forcePrevRefresh = true)
 	{
 		var nFound = 0;
 		var inFound = false;
-		var inPos = -1;
-		var outPos = -1;
 		for (int i = 0; i < searchDirs.Length; i++)
 		{
 			var conveyorBelt =
 				registerTile.Matrix.GetFirst<ConveyorBelt>(registerTile.LocalPosition + searchDirs[i].To3Int(), true);
 
-			//Default directions are Left To Right and Up to Down
-			// [prev] ---> [next] first default direction
-			//
-			// [prev]
-			// |    second default direction
-			// V
-			// [next]
+			// Default direction -->
+			//        1
+			//        |
+			//        |
+			// 0 ------------- 2
+			//        |
+			//        |
+			//        3
 
 			if (conveyorBelt != null && nFound < 2)
 			{
 				switch (i)
 				{
-					case 0: //First default IN pos:
+					case 0:
 						prevBelt = conveyorBelt;
 						inFound = true;
 						inPos = 0;
 						break;
-					case 1: //Second default IN pos:
+					case 1:
 						if (!inFound)
 						{
 							inPos = 1;
@@ -89,7 +94,7 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 							nextBelt = conveyorBelt;
 						}
 						break;
-					case 2: //Third default in:
+					case 2:
 						if (!inFound)
 						{
 							inPos = 2;
@@ -112,22 +117,80 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 			}
 		}
 
-		DetermineDirection(inPos, outPos);
+		DetermineDirection(forcePrevRefresh);
 	}
 
-	void DetermineDirection(int inPos, int outPos)
+	public void UpdateFromNext(ConveyorBelt _nextBelt, int pos)
+	{
+		nextBelt = _nextBelt;
+		outPos = pos;
+		DetermineDirection(false);
+	}
+
+	public void UpdateFromPrev(ConveyorBelt _prevBelt, int pos)
+	{
+		nextBelt = _prevBelt;
+		inPos = pos;
+		DetermineDirection(false);
+	}
+
+	void DetermineDirection(bool forcePrevRefresh)
 	{
 		if (isServer)
 		{
 			CurrentDirection = ConveyorDirections.GetDirection(inPos, outPos);
 			GetPositionOffset();
+			RefreshSprites();
+			if (forcePrevRefresh)
+			{
+				if (!ValidBelt(prevBelt)) return;
+
+				for (int i = 0; i < searchDirs.Length; i++)
+				{
+					var conveyorBelt =
+						registerTile.Matrix.GetFirst<ConveyorBelt>(registerTile.LocalPosition + searchDirs[i].To3Int(),
+							true);
+
+					if (conveyorBelt != null)
+					{
+						if (conveyorBelt == prevBelt)
+						{
+							int ourPos = -1;
+							switch (i)
+							{
+								case 0:
+									ourPos = 2;
+									break;
+								case 1:
+									ourPos = 3;
+									break;
+								case 2:
+									ourPos = 0;
+									break;
+								case 3:
+									ourPos = 1;
+									break;
+							}
+
+							prevBelt.UpdateFromNext(this, ourPos);
+						}
+					}
+				}
+			}
 		}
+	}
+
+	private bool ValidBelt(ConveyorBelt belt)
+	{
+		if (belt == null || !belt.gameObject.activeInHierarchy) return false;
+		return true;
 	}
 
 	public void SyncDirection(ConveyorDirection oldValue, ConveyorDirection newValue)
 	{
 		CurrentDirection = newValue;
 		GetPositionOffset();
+		RefreshSprites();
 	}
 
 	void GetPositionOffset()
@@ -148,7 +211,7 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 
 	public void MoveBelt()
 	{
-		ChangeAnimation();
+		RefreshSprites();
 		if(isServer) DetectItems();
 	}
 
@@ -176,10 +239,10 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 
 		GetPositionOffset();
 
-		ChangeAnimation();
+		RefreshSprites();
 	}
 
-	private void ChangeAnimation()
+	private void RefreshSprites()
 	{
 		spriteHandler.ChangeSprite((int)CurrentStatus);
 		spriteHandler.ChangeSpriteVariant((int) CurrentDirection);
@@ -312,18 +375,6 @@ public class ConveyorBelt : NetworkBehaviour, ICheckedInteractable<HandApply>
 //			});
 //		}
 	}
-
-
-#if UNITY_EDITOR//no idea how to get this to work, so you can see the correct conveyor direction in editor
-
-	private void Update()
-	{
-		if (Application.isEditor && !Application.isPlaying)
-		{
-			spriteHandler.gameObject.GetComponent<SpriteRenderer>().sprite = spriteHandler.Sprites[(int)CurrentDirection].Sprites[0];
-		}
-	}
-#endif
 }
 
 
