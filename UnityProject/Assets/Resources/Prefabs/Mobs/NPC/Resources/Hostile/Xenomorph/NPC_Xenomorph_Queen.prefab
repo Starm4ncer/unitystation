@@ -126,10 +126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea79a12bc31d4df394067a2be447854d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxDamage: 200
+  livingHealthBehaviour: {fileID: 0}
   Type: 1
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -185,10 +184,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea79a12bc31d4df394067a2be447854d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxDamage: 200
+  livingHealthBehaviour: {fileID: 0}
   Type: 0
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -564,13 +562,6 @@ MonoBehaviour:
   performingAction: 0
   activated: 0
   tickRate: 1
-  EatFoodA:
-    SetLoadSetting: 0
-    AssetAddress: 
-    AssetReference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
   CB_REAGENT: {fileID: 0}
   target: 0
   actionPerformTime: 0
@@ -607,7 +598,7 @@ MonoBehaviour:
   onlyHitTarget: 0
   attackSound:
     SetLoadSetting: 0
-    AssetAddress: 
+    AssetAddress: null
     AssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -672,6 +663,7 @@ MonoBehaviour:
   randomSoundProbability: 20
   searchTickRate: 0.5
   currentStatus: 0
+  ignoreForQueenCount: 0
   huggerCap: 20
   fertility: 50
   eggCooldown: 300

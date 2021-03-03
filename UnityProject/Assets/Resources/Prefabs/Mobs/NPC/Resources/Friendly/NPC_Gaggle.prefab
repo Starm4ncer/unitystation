@@ -43,10 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea79a12bc31d4df394067a2be447854d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxDamage: 200
+  livingHealthBehaviour: {fileID: 0}
   Type: 1
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -102,10 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea79a12bc31d4df394067a2be447854d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxDamage: 200
+  livingHealthBehaviour: {fileID: 0}
   Type: 0
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -274,7 +272,13 @@ MonoBehaviour:
   registerTile: {fileID: 0}
   floorDecal: {fileID: 0}
   isInitiallyNotPushable: 0
-  pushPullSound: 
+  pushPullSound:
+    SetLoadSetting: 0
+    AssetAddress: null
+    AssetReference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
   soundDelayTime: 0
   soundMinimumPitchVariance: 1
   soundMaximumPitchVariance: 1
@@ -331,7 +335,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMeleeable: 1
   butcherTime: 2
-  butcherSound: BladeSlice
+  butcherSound:
+    SetLoadSetting: 0
+    AssetAddress: null
+    AssetReference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
 --- !u!114 &114536369792164230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -488,10 +498,12 @@ MonoBehaviour:
   performingAction: 0
   activated: 1
   tickRate: 1
+  CB_REAGENT: {fileID: 0}
   target: 0
   actionPerformTime: 0
   hasFoodPrefereces: 0
   foodPreferences: []
+  IsEmagged: 0
 --- !u!114 &136915006712723914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,6 +655,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 004a1835dfe907b4482420ce65bf12f5, type: 2}
   - {fileID: 11400000, guid: 2e3231624d8195e4d8e31903daa939cc, type: 2}
   PresentSpriteSet: {fileID: 11400000, guid: 004a1835dfe907b4482420ce65bf12f5, type: 2}
+  randomInitialSprite: 0
   pushTextureOnStartUp: 1
   variantIndex: 0
   palette: []

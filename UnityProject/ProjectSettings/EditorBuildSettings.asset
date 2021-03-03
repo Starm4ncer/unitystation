@@ -107,6 +107,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AdditionalScenes/AncientStation.unity
     guid: 33ae55578dfdf7545b2b64b39eb28a70
+  - enabled: 1
+    path: Assets/Scenes/MainStations/AuroraStation5.unity
+    guid: 3fcf4882ef651bf4695c2f0233f40d29
+  - enabled: 1
+    path: Assets/Scenes/MainStations/AuroraStation.unity
+    guid: 4261223086ebb9b429ad2e1903445efb
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 7ac8cd75382a23042b1a13021adfae5d,
       type: 2}

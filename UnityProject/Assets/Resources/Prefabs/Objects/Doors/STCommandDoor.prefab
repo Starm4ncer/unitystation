@@ -146,7 +146,7 @@ MonoBehaviour:
   butcherTime: 2
   butcherSound:
     SetLoadSetting: 0
-    AssetAddress: 
+    AssetAddress: null
     AssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -516,7 +516,7 @@ MonoBehaviour:
   initialIntegrity: 350
   soundOnHit:
     SetLoadSetting: 0
-    AssetAddress: 
+    AssetAddress: null
     AssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -541,7 +541,9 @@ MonoBehaviour:
     AcidProof: 0
     Indestructable: 0
     FreezeProof: 0
+    LightningDamageProof: 0
   HeatResistance: 100
+  ExplosionsDamage: 100
 --- !u!114 &114121495487176538
 MonoBehaviour:
   m_ObjectHideFlags: 0
